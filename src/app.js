@@ -11,7 +11,13 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
-const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+
+// Handle CORS for both local and production environments
+const corsOrigin = process.env.CORS_ORIGIN || (
+  process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000'
+);
 
 app.use(helmet());
 app.use(cors({
