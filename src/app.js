@@ -12,37 +12,14 @@ const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
-// Handle CORS for both local and production environments
-const allowedOrigins = new Set([
-  process.env.CORS_ORIGIN,
-  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  'http://localhost:3000',
-  'http://localhost:3001',
-].filter(Boolean));
-
+// CORS configuration
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (
-      allowedOrigins.has(origin) ||
-      origin.endsWith('.vercel.app') ||
-      origin === 'https://vercel.app'
-    ) {
-      return callback(null, true);
-    }
-
-    return callback(new Error(`CORS blocked for origin: ${origin}`));
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true,
 };
 
 app.use(helmet());
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 menit
